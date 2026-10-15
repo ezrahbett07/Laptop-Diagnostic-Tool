@@ -14,8 +14,17 @@ param(
     [switch]$StressTest,
     [switch]$QuickTest,
     [switch]$DeepScan,
-    [string]$OutputPath = "$env:USERPROFILE\Desktop\LaptopReport_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
+    [string]$OutputPath = ""
 )
+
+# Set default output path to actual Desktop (handles OneDrive redirection)
+if ([string]::IsNullOrEmpty($OutputPath)) {
+    $DesktopPath = [Environment]::GetFolderPath('Desktop')
+    if ([string]::IsNullOrEmpty($DesktopPath) -or -not (Test-Path $DesktopPath)) {
+        $DesktopPath = "$env:USERPROFILE"
+    }
+    $OutputPath = Join-Path $DesktopPath "LaptopReport_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
+}
 
 # ============================================================
 # INITIALIZATION
@@ -963,10 +972,37 @@ Write-Host "`n  Report saved to: $OutputPath" -ForegroundColor Cyan
 
 # Auto-open report in default browser
 Write-Host "`n  Opening report in browser..." -ForegroundColor Green
-Start-Process $OutputPath
+
+# Multiple methods to ensure browser opens
+try {
+    # Method 1: Start-Process (most common)
+    Start-Process -FilePath $OutputPath -ErrorAction Stop
+    Write-Host "  [OK] Opened with Start-Process" -ForegroundColor Green
+} catch {
+    try {
+        # Method 2: Invoke-Item
+        Invoke-Item -Path $OutputPath -ErrorAction Stop
+        Write-Host "  [OK] Opened with Invoke-Item" -ForegroundColor Green
+    } catch {
+        try {
+            # Method 3: explorer.exe
+            Start-Process explorer.exe -ArgumentList $OutputPath -ErrorAction Stop
+            Write-Host "  [OK] Opened with explorer.exe" -ForegroundColor Green
+        } catch {
+            try {
+                # Method 4: cmd start command
+                cmd /c start "" "$OutputPath"
+                Write-Host "  [OK] Opened with cmd start" -ForegroundColor Green
+            } catch {
+                Write-Host "  [ERROR] Could not open browser automatically" -ForegroundColor Red
+                Write-Host "  Please open manually: $OutputPath" -ForegroundColor Yellow
+            }
+        }
+    }
+}
 
 Write-Host "`n  +===========================================================+" -ForegroundColor Cyan
-Write-Host "  |  DONE! Report opened in your default browser.             |" -ForegroundColor Cyan  
+Write-Host "  |  DONE! Check your browser for the report.                |" -ForegroundColor Cyan  
 Write-Host "  +===========================================================+" -ForegroundColor Cyan
 Write-Host ""
 
