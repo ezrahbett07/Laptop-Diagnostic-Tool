@@ -1,0 +1,22 @@
+# ============================================================
+# LAPTOP CHECK - One-Liner Command  
+# ============================================================
+# COPY AND PASTE THIS LINE INTO POWERSHELL:
+# ============================================================
+
+iex (irm "https://raw.githubusercontent.com/ezrahbett07/Laptop-Diagnostic-Tool/main/QuickCheck.ps1")
+
+# ============================================================
+# FOR STRESS TEST USE:
+# ============================================================
+
+iex (irm "https://raw.githubusercontent.com/ezrahbett07/Laptop-Diagnostic-Tool/main/QuickCheck.ps1") -Stress
+
+# ============================================================
+# ALTERNATIVE - Download then run manually:
+# ============================================================
+
+$dir = "$env:TEMP\LaptopCheck"; mkdir $dir -Force | Out-Null
+iwr "https://raw.githubusercontent.com/ezrahbett07/Laptop-Diagnostic-Tool/main/LaptopDiagnosticTool.ps1" -OutFile "$dir\tool.ps1"
+iwr "https://raw.githubusercontent.com/ezrahbett07/Laptop-Diagnostic-Tool/main/HardwareDatabase.psm1" -OutFile "$dir\db.psm1"
+& "$dir\tool.ps1" -QuickTest

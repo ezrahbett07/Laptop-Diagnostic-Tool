@@ -394,7 +394,7 @@ Write-Section "LAPTOP MODEL VERIFICATION"
 
 Write-Subsection "Checking laptop model against known specs..."
 
-$laptopVerify2 = Verify-LaptopModel -model $sys.Model -cpuName $cpu.Name -ramGB $totalRamGB -storageType $disks[0].BusType.ToString() -storageGB [math]::Round($disks[0].Size/1GB) -ramSpeed $maxDetectedSpeed
+$laptopVerify2 = Verify-LaptopModel -model $sys.Model -cpuName $cpu.Name -ramGB $totalRamGB -storageType $disks[0].BusType.ToString() -storageGB ([math]::Round($disks[0].Size/1GB)) -ramSpeed $maxDetectedSpeed
 
 if ($laptopVerify2.Found) {
     Write-Host "  Model Found   : Yes" -ForegroundColor Green
