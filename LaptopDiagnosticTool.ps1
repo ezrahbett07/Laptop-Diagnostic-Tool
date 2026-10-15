@@ -899,7 +899,18 @@ h1 { color: #58a6ff; font-size: 24px; text-align: center; margin-bottom: 5px; }
 .item-warn .item-name { color: #d29922; }
 .item-fail .item-name { color: #f85149; }
 .item-detail { color: #8b949e; font-size: 12px; margin-top: 4px; }
-.item-effect { color: #f0883e; font-size: 12px; margin-top: 6px; padding: 5px; background: rgba(240, 136, 62, 0.1); border-radius: 4px; }
+.item-effect { 
+    color: #e6edf3; 
+    font-size: 13px; 
+    margin-top: 10px; 
+    padding: 15px; 
+    background: rgba(240, 136, 62, 0.15); 
+    border-radius: 6px; 
+    border: 1px solid rgba(240, 136, 62, 0.3);
+    line-height: 1.6;
+}
+.item-effect strong { color: #f0883e; }
+.item-effect br { margin: 5px 0; }
 .section { background: #161b22; padding: 20px; border-radius: 10px; margin: 15px 0; border: 1px solid #30363d; }
 .section-title { color: #58a6ff; font-size: 18px; margin-bottom: 15px; }
 table { border-collapse: collapse; width: 100%; }
@@ -982,31 +993,172 @@ $htmlReport += @"
 <div class="column-title">ISSUES - Problems Found</div>
 "@
 
-# Add issues to right column with effects
+# Add issues to right column with detailed explanations
 foreach ($i in $issues) {
     $itemClass = if ($i.Severity -eq 'FAIL') { 'item-fail' } else { 'item-warn' }
     
-    # Determine effect based on issue type
-    $effect = ""
+    # Detailed explanations for each issue type
+    $explanation = ""
     switch -Wildcard ($i.Test) {
-        "*Battery Health*" { $effect = "EFFECT: Short battery life, may need replacement ($25-40)" }
-        "*Battery Cycles*" { $effect = "EFFECT: Battery nearing end of lifespan, expect rapid degradation" }
-        "*CPU Age*" { $effect = "EFFECT: Older CPU, slower performance, may not run latest software well" }
-        "*Available RAM*" { $effect = "EFFECT: Slow multitasking, browser tabs may freeze, poor performance" }
-        "*Write Speed*" { $effect = "EFFECT: Slower file transfers, longer app load times" }
-        "*GPU Driver*" { $effect = "EFFECT: Graphics issues, poor gaming/video performance" }
-        "*WiFi*" { $effect = "EFFECT: Unstable internet, dropped connections" }
-        "*Network*" { $effect = "EFFECT: Connectivity issues, may need adapter replacement" }
-        "*TPM*" { $effect = "EFFECT: Cannot use BitLocker encryption, some apps won't run" }
-        "*Disk Health*" { $effect = "WARNING: Drive may fail soon - backup data immediately!" }
-        "*Failures*" { $effect = "CRITICAL: Hardware failure detected" }
+        "*Battery Health*" {
+            $explanation = @"
+<strong>What this means:</strong> The battery has lost its original capacity and can only hold $($i.Detail -replace '.*?(\d+\.?\d*)%.*','$1')% of its original charge.<br><br>
+<strong>How it affects you:</strong> You'll get significantly less battery life than when new. If it originally lasted 8 hours, it may now only last 3-4 hours.<br><br>
+<strong>What to do:</strong> 
+• Negotiate the price down by $30-50 to cover replacement cost
+• Or plan to buy a new battery ($25-40 for most laptops)
+• Check if battery is replaceable on this model
+"@
+        }
+        "*Battery Cycles*" {
+            $explanation = @"
+<strong>What this means:</strong> The battery has gone through $($i.Detail -replace '[^\d]','') complete charge cycles. Most laptop batteries are rated for 300-500 cycles before significant degradation.<br><br>
+<strong>How it affects you:</strong> Battery is near end of its useful life. Capacity will continue to drop rapidly.<br><br>
+<strong>What to do:</strong> 
+• Treat battery as needing replacement soon
+• Negotiate price lower to account for this
+• If staying plugged in mostly, less of an issue
+"@
+        }
+        "*CPU Age*" {
+            $explanation = @"
+<strong>What this means:</strong> The processor is several years old. While still functional, it lacks features and performance of newer CPUs.<br><br>
+<strong>How it affects you:</strong> 
+• Slower performance in demanding applications
+• May struggle with heavy multitasking
+• Newer software/games may not run well
+• Worse battery efficiency than newer chips<br><br>
+<strong>What to do:</strong> 
+• Acceptable for basic tasks (web, email, documents)
+• Not recommended for video editing, programming, or gaming
+• Factor age into price negotiation
+"@
+        }
+        "*Available RAM*" {
+            $explanation = @"
+<strong>What this means:</strong> Only $($i.Detail -replace '.*?(\d+).*','$1') MB of RAM is currently free. The system is using most of its available memory.<br><br>
+<strong>How it affects you:</strong> 
+• Slow performance when multitasking
+• Browser tabs may freeze or crash
+• Applications take longer to switch between
+• System may feel sluggish overall<br><br>
+<strong>What to do:</strong> 
+• Close unnecessary background applications
+• Consider upgrading RAM if slots available
+• 8GB is minimum; 16GB recommended for smooth use
+"@
+        }
+        "*Write Speed*" {
+            $explanation = @"
+<strong>What this means:</strong> The storage drive's write speed is below optimal. This could indicate an older SSD, SATA interface, or a drive nearing end of life.<br><br>
+<strong>How it affects you:</strong> 
+• Longer times saving files
+• Slower application installations
+• System may feel less responsive<br><br>
+<strong>What to do:</strong> 
+• Check if drive is NVMe or SATA (NVMe is faster)
+• Run full diagnostic on the drive
+• Consider SSD replacement if severely degraded
+"@
+        }
+        "*GPU Driver*" {
+            $explanation = @"
+<strong>What this means:</strong> The graphics driver is outdated, which can cause compatibility and performance issues.<br><br>
+<strong>How it affects you:</strong> 
+• Potential graphics glitches or display issues
+• Poor performance in games or video playback
+• Some applications may not work correctly<br><br>
+<strong>What to do:</strong> 
+• Update drivers from manufacturer's website (free fix!)
+• Check AMD/Intel/NVIDIA support pages
+• This is a software issue, not hardware failure
+"@
+        }
+        "*WiFi*" {
+            $explanation = @"
+<strong>What this means:</strong> The wireless adapter has been experiencing errors and may be unstable.<br><br>
+<strong>How it affects you:</strong> 
+• Internet drops frequently
+• Slow or unreliable WiFi connection
+• Video calls may freeze or disconnect
+• May need to use wired connection<br><br>
+<strong>What to do:</strong> 
+• Update WiFi drivers first (free fix)
+• Try resetting network settings
+• If persists, WiFi card may need replacement ($15-30)
+• USB WiFi adapter as temporary solution ($10-15)
+"@
+        }
+        "*Network*" {
+            $explanation = @"
+<strong>What this means:</strong> A network adapter is showing issues or not functioning properly.<br><br>
+<strong>How it affects you:</strong> 
+• Connectivity problems with internet
+• May not detect WiFi networks reliably<br><br>
+<strong>What to do:</strong> 
+• Update network drivers
+• Check if it's WiFi or Ethernet issue
+• USB adapter can be quick workaround
+"@
+        }
+        "*WiFi Stability*" {
+            $explanation = @"
+<strong>What this means:</strong> $($i.Detail -replace '.*?(\d+).*','$1') network errors were detected in the last 7 days, indicating unstable WiFi.<br><br>
+<strong>How it affects you:</strong> 
+• Frustrating internet experience
+• Dropped connections during important tasks<br><br>
+<strong>What to do:</strong> 
+• Update WiFi drivers
+• Replace WiFi card if problems persist
+• Use Ethernet when possible
+"@
+        }
+        "*TPM*" {
+            $explanation = @"
+<strong>What this means:</strong> TPM (Trusted Platform Module) chip is not present or not enabled. This is a security feature.<br><br>
+<strong>How it affects you:</strong> 
+• Cannot use BitLocker drive encryption
+• Some modern apps require TPM
+• Windows 11 officially requires TPM 2.0<br><br>
+<strong>What to do:</strong> 
+• Check if TPM is disabled in BIOS (may just need enabling)
+• Less critical for basic home use
+• Important for business/corporate environments
+"@
+        }
+        "*Disk Health*" {
+            $explanation = @"
+<strong>What this means:</strong> The storage drive is showing signs of potential failure.<br><br>
+<strong>How it affects you:</strong> 
+• Risk of data loss
+• System may crash or become unresponsive
+• Files may become corrupted<br><br>
+<strong>What to do:</strong> 
+• BACKUP IMPORTANT DATA IMMEDIATELY
+• Run full disk diagnostic
+• Replace drive if warnings persist
+• SSD replacement: $30-80 for 256GB-512GB
+"@
+        }
+        "*Failures*" {
+            $explanation = @"
+<strong>What this means:</strong> Hardware failure has been detected during testing.<br><br>
+<strong>How it affects you:</strong> 
+• Component is failing or has failed
+• System may be unreliable<br><br>
+<strong>What to do:</strong> 
+• Identify which component failed
+• Get repair estimate before buying
+• Negotiate heavily or avoid purchase
+"@
+        }
     }
     
     $htmlReport += @"
 <div class="item $itemClass">
 <div class="item-name">[$($i.Severity)] $($i.Test)</div>
 <div class="item-detail">$($i.Detail)</div>
-$(if($effect){"<div class='item-effect'>$effect</div>"})
+$(if($explanation){"<div class='item-effect'>$explanation</div>"})
 </div>
 "@
 }
