@@ -170,24 +170,27 @@ $laptopSpecs = @{
         ExpectedMaxRAMSpeed = 2400
     }
     
-    # Lenovo ThinkPad series
-    "ThinkPad T14 Gen 2" = @{
-        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+    # ============================================================
+    # LENOVO THINKPAD SERIES (Business)
+    # ============================================================
+    # ThinkPad X1 Carbon
+    "ThinkPad X1 Carbon Gen 6" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
         ExpectedRAMMin = 8
-        ExpectedRAMMax = 48
+        ExpectedRAMMax = 16
         ExpectedStorageType = "NVMe"
         ExpectedStorageMinGB = 256
-        ReleaseYear = 2021
-        ExpectedMaxRAMSpeed = 3200
+        ReleaseYear = 2018
+        ExpectedMaxRAMSpeed = 2400
     }
-    "ThinkPad T14s Gen 2" = @{
-        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+    "ThinkPad X1 Carbon Gen 7" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
         ExpectedRAMMin = 8
-        ExpectedRAMMax = 32
+        ExpectedRAMMax = 16
         ExpectedStorageType = "NVMe"
         ExpectedStorageMinGB = 256
-        ReleaseYear = 2021
-        ExpectedMaxRAMSpeed = 3200
+        ReleaseYear = 2019
+        ExpectedMaxRAMSpeed = 2400
     }
     "ThinkPad X1 Carbon Gen 8" = @{
         ExpectedCPUFamily = "Intel.*i5|i7"
@@ -207,6 +210,210 @@ $laptopSpecs = @{
         ReleaseYear = 2021
         ExpectedMaxRAMSpeed = 4266
     }
+    "ThinkPad X1 Carbon Gen 10" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 5200
+    }
+    "ThinkPad X1 Carbon Gen 11" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2023
+        ExpectedMaxRAMSpeed = 5600
+    }
+    "ThinkPad X1 Carbon Gen 12" = @{
+        ExpectedCPUFamily = "Intel.*Ultra 5|Ultra 7"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 64
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 512
+        ReleaseYear = 2024
+        ExpectedMaxRAMSpeed = 7467
+    }
+    
+    # ThinkPad X1 Yoga
+    "ThinkPad X1 Yoga Gen 4" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2019
+        ExpectedMaxRAMSpeed = 2400
+    }
+    "ThinkPad X1 Yoga Gen 5" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad X1 Yoga Gen 6" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 4266
+    }
+    "ThinkPad X1 Yoga Gen 7" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 5200
+    }
+    
+    # ThinkPad T Series
+    "ThinkPad T14 Gen 1" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad T14 Gen 2" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 48
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad T14 Gen 3" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 48
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad T14 Gen 4" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 64
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2023
+        ExpectedMaxRAMSpeed = 5600
+    }
+    "ThinkPad T14s Gen 1" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad T14s Gen 2" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad T14s Gen 3" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 5200
+    }
+    "ThinkPad T16 Gen 1" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 48
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad T16 Gen 2" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 64
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 5200
+    }
+    "ThinkPad T480" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe|SSD"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2018
+        ExpectedMaxRAMSpeed = 2400
+    }
+    "ThinkPad T490" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 48
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2019
+        ExpectedMaxRAMSpeed = 2400
+    }
+    "ThinkPad T495" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2019
+        ExpectedMaxRAMSpeed = 2400
+    }
+    "ThinkPad T15 Gen 1" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 48
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad T15 Gen 2" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 48
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    
+    # ThinkPad L Series (Budget Business)
+    "ThinkPad L14 Gen 1" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 4
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe|SSD"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
     "ThinkPad L14 Gen 2" = @{
         ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
         ExpectedRAMMin = 8
@@ -216,8 +423,198 @@ $laptopSpecs = @{
         ReleaseYear = 2021
         ExpectedMaxRAMSpeed = 3200
     }
+    "ThinkPad L14 Gen 3" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 64
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad L15 Gen 1" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 4
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe|SSD"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad L15 Gen 2" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 64
+        ExpectedStorageType = "NVMe|SSD"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad L480" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 4
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "SSD|HDD"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2018
+        ExpectedMaxRAMSpeed = 2400
+    }
+    "ThinkPad L490" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 4
+        ExpectedRAMMax = 64
+        ExpectedStorageType = "NVMe|SSD"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2019
+        ExpectedMaxRAMSpeed = 2400
+    }
     
-    # Lenovo ThinkBook
+    # ThinkPad E Series (Entry Business)
+    "ThinkPad E14 Gen 2" = @{
+        ExpectedCPUFamily = "AMD Ryzen|Intel.*i5|i7"
+        ExpectedRAMMin = 4
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe|SSD"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad E14 Gen 3" = @{
+        ExpectedCPUFamily = "AMD Ryzen|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 40
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad E15 Gen 2" = @{
+        ExpectedCPUFamily = "AMD Ryzen|Intel.*i5|i7"
+        ExpectedRAMMin = 4
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe|SSD"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad E15 Gen 3" = @{
+        ExpectedCPUFamily = "AMD Ryzen|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 40
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 3200
+    }
+    
+    # ThinkPad P Series (Workstation)
+    "ThinkPad P14s Gen 1" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 48
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad P14s Gen 2" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 48
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad P15v Gen 1" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 64
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    
+    # ThinkPad X Series (Ultrabook)
+    "ThinkPad X13 Gen 1" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad X13 Gen 2" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkPad X13 Gen 3" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 5200
+    }
+    "ThinkPad X390" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2019
+        ExpectedMaxRAMSpeed = 2400
+    }
+    
+    # ThinkPad Z Series (Modern)
+    "ThinkPad Z13 Gen 1" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 6400
+    }
+    "ThinkPad Z16 Gen 1" = @{
+        ExpectedCPUFamily = "AMD Ryzen PRO"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 6400
+    }
+    
+    # ============================================================
+    # LENOVO THINKBOOK SERIES (SMB)
+    # ============================================================
+    "ThinkBook 13s Gen 2" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkBook 13s Gen 3" = @{
+        ExpectedCPUFamily = "AMD Ryzen|Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
     "ThinkBook 14 G2 ITL" = @{
         ExpectedCPUFamily = "Intel.*i5|i7"
         ExpectedRAMMin = 8
@@ -227,8 +624,283 @@ $laptopSpecs = @{
         ReleaseYear = 2021
         ExpectedMaxRAMSpeed = 3200
     }
+    "ThinkBook 14 G3 ACL" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 40
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkBook 14 G4+ ABA" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 40
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkBook 15 G2 ITL" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 40
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkBook 15 G3 ACL" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 40
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkBook 16 G2 IAH" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 64
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "ThinkBook 16p G2 ACH" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 512
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 4800
+    }
     
-    # Apple MacBook (via Boot Camp/VM - rare)
+    # ============================================================
+    # LENOVO IDEAPAD SERIES (Consumer)
+    # ============================================================
+    "IdeaPad 3 14ITL6" = @{
+        ExpectedCPUFamily = "Intel.*i3|i5|i7"
+        ExpectedRAMMin = 4
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe|SSD|HDD"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "IdeaPad 3 15ITL6" = @{
+        ExpectedCPUFamily = "Intel.*i3|i5|i7"
+        ExpectedRAMMin = 4
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe|SSD|HDD"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "IdeaPad 3 14ALC6" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 4
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe|SSD"
+        ExpectedStorageMinGB = 128
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "IdeaPad 5 14ITL05" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "IdeaPad 5 15ITL05" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "IdeaPad 5 14ALC05" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "IdeaPad 5 Pro 14ITL6" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "IdeaPad 5 Pro 16ACH6" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "IdeaPad Flex 5 14ITL05" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "IdeaPad Flex 5 14ALC05" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    
+    # ============================================================
+    # LENOVO YOGA SERIES (Premium Consumer)
+    # ============================================================
+    "Yoga 7 14ITL5" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "Yoga 7 14ARB7" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "Yoga 7i 14ITL5" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "Yoga 9 14ITL5" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 4266
+    }
+    "Yoga 9i 14ITL5" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 4266
+    }
+    "Yoga Slim 7 14ITL05" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "Yoga Slim 7 14ARE05" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    
+    # ============================================================
+    # LENOVO LEGION SERIES (Gaming)
+    # ============================================================
+    "Legion 5 15IMH05" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "Legion 5 15ACH5" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "Legion 5 Pro 16ACH6" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 512
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "Legion 5i 16ITH6" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 512
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "Legion 7 16ACHg6" = @{
+        ExpectedCPUFamily = "AMD Ryzen"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 512
+        ReleaseYear = 2021
+        ExpectedMaxRAMSpeed = 3200
+    }
+    "Legion Slim 7 16IAH7" = @{
+        ExpectedCPUFamily = "Intel.*i5|i7"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 32
+        ExpectedStorageType = "NVMe"
+        ExpectedStorageMinGB = 512
+        ReleaseYear = 2022
+        ExpectedMaxRAMSpeed = 4800
+    }
+    
+    # ============================================================
+    # APPLE MACBOOK (via Boot Camp/VM - rare)
+    # ============================================================
     "MacBookPro15,1" = @{
         ExpectedCPUFamily = "Intel.*i7|i9"
         ExpectedRAMMin = 16
@@ -237,6 +909,24 @@ $laptopSpecs = @{
         ExpectedStorageMinGB = 256
         ReleaseYear = 2019
         ExpectedMaxRAMSpeed = 2400
+    }
+    "MacBookPro16,1" = @{
+        ExpectedCPUFamily = "Intel.*i7|i9"
+        ExpectedRAMMin = 16
+        ExpectedRAMMax = 64
+        ExpectedStorageType = "SSD"
+        ExpectedStorageMinGB = 512
+        ReleaseYear = 2019
+        ExpectedMaxRAMSpeed = 2666
+    }
+    "MacBookAir9,1" = @{
+        ExpectedCPUFamily = "Intel.*i3|i5|i7"
+        ExpectedRAMMin = 8
+        ExpectedRAMMax = 16
+        ExpectedStorageType = "SSD"
+        ExpectedStorageMinGB = 256
+        ReleaseYear = 2020
+        ExpectedMaxRAMSpeed = 3733
     }
 }
 

@@ -960,7 +960,15 @@ $htmlReport += '</body></html>'
 
 $htmlReport | Out-File -FilePath $OutputPath -Encoding UTF8
 Write-Host "`n  Report saved to: $OutputPath" -ForegroundColor Cyan
-Write-Host "  Open the HTML file in a browser for detailed report.`n" -ForegroundColor Gray
+
+# Auto-open report in default browser
+Write-Host "`n  Opening report in browser..." -ForegroundColor Green
+Start-Process $OutputPath
+
+Write-Host "`n  +===========================================================+" -ForegroundColor Cyan
+Write-Host "  |  DONE! Report opened in your default browser.             |" -ForegroundColor Cyan  
+Write-Host "  +===========================================================+" -ForegroundColor Cyan
+Write-Host ""
 
 # Return summary object
 return [PSCustomObject]@{
