@@ -131,6 +131,15 @@ $systemInfo = [PSCustomObject]@{
     CPUStepping = $cpu.Stepping
     CPUId = $cpu.ProcessorId
     RAM_GB = [math]::Round($sys.TotalPhysicalMemory/1GB, 2)
+    # Storage details (will be populated in storage section)
+    StorageModel = ""
+    StorageType = ""
+    StorageCapacityGB = 0
+    StorageInterface = ""
+    # RAM details (will be populated in RAM section)
+    RAMType = ""
+    RAMSpeedMHz = 0
+    RAMManufacturer = ""
 }
 
 Write-Host "  Manufacturer  : $($systemInfo.Manufacturer)"
@@ -225,8 +234,19 @@ foreach ($stick in $ram) {
     $totalRamGB += $stickGB
     $partNum = if($stick.PartNumber){$stick.PartNumber.Trim()}else{"Unknown"}
     
+    # Get RAM type from SMBIOSMemoryType
+    $ramType = switch ($stick.SMBIOSMemoryType) {
+        20 { "DDR" }
+        21 { "DDR2" }
+        24 { "DDR3" }
+        26 { "DDR4" }
+        34 { "DDR5" }
+        default { "Unknown" }
+    }
+    
     Write-Host "  Slot: $($stick.BankLabel)" -ForegroundColor White
     Write-Host "    Capacity    : $stickGB GB"
+    Write-Host "    Type        : $ramType"
     Write-Host "    Speed       : $($stick.Speed) MHz (Configured: $($stick.ConfiguredClockSpeed) MHz)"
     Write-Host "    Manufacturer: $($stick.Manufacturer)"
     Write-Host "    Part Number : $partNum"
@@ -235,7 +255,7 @@ foreach ($stick in $ram) {
     $ramVerify = Verify-RAM -partNumber $partNum -capacityGB $stickGB -speed $stick.Speed -manufacturer $stick.Manufacturer
     
     if ($ramVerify.Found) {
-        Add-Pass "RAM Module" "$partNum - Verified ($($stickGB)GB $($stick.Speed)MHz)"
+        Add-Pass "RAM Module" "$partNum - Verified ($($stickGB)GB $ramType $($stick.Speed)MHz)"
         if ($ramVerify.Warnings.Count -gt 0) {
             foreach ($w in $ramVerify.Warnings) { Add-Warn "RAM Check" $w }
         }
@@ -246,9 +266,17 @@ foreach ($stick in $ram) {
     $ramDetails += [PSCustomObject]@{
         Slot = $stick.BankLabel
         Capacity = $stickGB
+        Type = $ramType
         Speed = $stick.Speed
         PartNumber = $partNum
         Manufacturer = $stick.Manufacturer
+    }
+    
+    # Update systemInfo with first stick's details (or most common)
+    if (-not $systemInfo.RAMType -or $systemInfo.RAMType -eq "Unknown") {
+        $systemInfo.RAMType = $ramType
+        $systemInfo.RAMSpeedMHz = $stick.ConfiguredClockSpeed
+        $systemInfo.RAMManufacturer = $stick.Manufacturer
     }
 }
 
@@ -313,6 +341,14 @@ foreach ($disk in $disks) {
     Write-Host "  Interface   : $($disk.BusType)"
     Write-Host "  Capacity    : $sizeGB GB"
     Write-Host "  Health      : $($disk.HealthStatus)"
+    
+    # Update systemInfo with first disk's details
+    if (-not $systemInfo.StorageModel) {
+        $systemInfo.StorageModel = $disk.FriendlyName
+        $systemInfo.StorageType = $disk.MediaType.ToString()
+        $systemInfo.StorageCapacityGB = $sizeGB
+        $systemInfo.StorageInterface = $disk.BusType.ToString()
+    }
     
     # Verify against database
     $storageVerify = Verify-Storage -modelName $disk.FriendlyName -sizeBytes $disk.Size -busType $disk.BusType.ToString()
@@ -816,46 +852,46 @@ Write-Host "  Failures: $(($issues | Where-Object {$_.Severity -eq 'FAIL'}).Coun
 # Critical issues reduce score more than minor ones
 
 # Define priority weights for each test type
-# Format: TestName = @{ WarnPenalty = X; FailPenalty = Y; Priority = "CRITICAL/HIGH/MEDIUM/LOW" }
 $testPriority = @{
-    # CRITICAL - Direct impact on usability/safety (Max penalty: 25-30)
-    "Disk Health"       = @{ WarnPenalty = 20; FailPenalty = 30; Priority = "CRITICAL" }
-    "Battery Health"    = @{ WarnPenalty = 15; FailPenalty = 25; Priority = "CRITICAL" }
-    "System Stability"  = @{ WarnPenalty = 15; FailPenalty = 30; Priority = "CRITICAL" }
-    "Memory Errors"     = @{ WarnPenalty = 15; FailPenalty = 25; Priority = "CRITICAL" }
+    # CRITICAL - Direct impact on usability/safety
+    "Disk Health"       = @{ WarnPenalty = 15; FailPenalty = 25; Priority = "CRITICAL" }
+    "Battery Health"    = @{ WarnPenalty = 12; FailPenalty = 20; Priority = "CRITICAL" }
+    "System Stability"  = @{ WarnPenalty = 12; FailPenalty = 25; Priority = "CRITICAL" }
+    "Memory Errors"     = @{ WarnPenalty = 12; FailPenalty = 20; Priority = "CRITICAL" }
     
-    # HIGH - Significantly affects experience (Max penalty: 12-15)
-    "Battery Cycles"    = @{ WarnPenalty = 12; FailPenalty = 15; Priority = "HIGH" }
-    "Available RAM"     = @{ WarnPenalty = 12; FailPenalty = 15; Priority = "HIGH" }
-    "WiFi Stability"    = @{ WarnPenalty = 12; FailPenalty = 15; Priority = "HIGH" }
-    "Total RAM"         = @{ WarnPenalty = 12; FailPenalty = 15; Priority = "HIGH" }
-    "Write Speed"       = @{ WarnPenalty = 10; FailPenalty = 15; Priority = "HIGH" }
+    # HIGH - Significantly affects experience
+    "Battery Cycles"    = @{ WarnPenalty = 8;  FailPenalty = 12; Priority = "HIGH" }
+    "Available RAM"     = @{ WarnPenalty = 8;  FailPenalty = 12; Priority = "HIGH" }
+    "WiFi Stability"    = @{ WarnPenalty = 8;  FailPenalty = 12; Priority = "HIGH" }
+    "Total RAM"         = @{ WarnPenalty = 8;  FailPenalty = 12; Priority = "HIGH" }
+    "Write Speed"       = @{ WarnPenalty = 6;  FailPenalty = 10; Priority = "HIGH" }
     
-    # MEDIUM - Noticeable but manageable (Max penalty: 7-10)
-    "CPU Age"           = @{ WarnPenalty = 8;  FailPenalty = 10; Priority = "MEDIUM" }
-    "GPU Driver"        = @{ WarnPenalty = 5;  FailPenalty = 8;  Priority = "MEDIUM" }
-    "Network"           = @{ WarnPenalty = 7;  FailPenalty = 10; Priority = "MEDIUM" }
-    "Disk Space"        = @{ WarnPenalty = 5;  FailPenalty = 8;  Priority = "MEDIUM" }
-    "TPM"               = @{ WarnPenalty = 5;  FailPenalty = 8;  Priority = "MEDIUM" }
-    "Windows License"   = @{ WarnPenalty = 8;  FailPenalty = 15; Priority = "MEDIUM" }
+    # MEDIUM - Noticeable but manageable
+    "CPU Age"           = @{ WarnPenalty = 5;  FailPenalty = 8;  Priority = "MEDIUM" }
+    "GPU Driver"        = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "MEDIUM" }
+    "Network"           = @{ WarnPenalty = 4;  FailPenalty = 8;  Priority = "MEDIUM" }
+    "Disk Space"        = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "MEDIUM" }
+    "TPM"               = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "MEDIUM" }
+    "Windows License"   = @{ WarnPenalty = 5;  FailPenalty = 10; Priority = "MEDIUM" }
     
-    # LOW - Minor inconvenience (Max penalty: 3-5)
-    "GPU"               = @{ WarnPenalty = 5;  FailPenalty = 10; Priority = "LOW" }
-    "VRAM"              = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
-    "CPU Verification"  = @{ WarnPenalty = 5;  FailPenalty = 10; Priority = "LOW" }
-    "RAM Module"        = @{ WarnPenalty = 5;  FailPenalty = 10; Priority = "LOW" }
-    "Antivirus"         = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
-    "Firewall"          = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
-    "Definitions"       = @{ WarnPenalty = 2;  FailPenalty = 3;  Priority = "LOW" }
-    "WiFi Standard"     = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
-    "Disk Interface"    = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
-    "RAM Speed"         = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
-    "RAM Configuration" = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
+    # LOW - Minor inconvenience
+    "GPU"               = @{ WarnPenalty = 3;  FailPenalty = 8;  Priority = "LOW" }
+    "VRAM"              = @{ WarnPenalty = 2;  FailPenalty = 4;  Priority = "LOW" }
+    "CPU Verification"  = @{ WarnPenalty = 3;  FailPenalty = 8;  Priority = "LOW" }
+    "RAM Module"        = @{ WarnPenalty = 3;  FailPenalty = 8;  Priority = "LOW" }
+    "Antivirus"         = @{ WarnPenalty = 2;  FailPenalty = 4;  Priority = "LOW" }
+    "Firewall"          = @{ WarnPenalty = 2;  FailPenalty = 4;  Priority = "LOW" }
+    "Definitions"       = @{ WarnPenalty = 1;  FailPenalty = 2;  Priority = "LOW" }
+    "WiFi Standard"     = @{ WarnPenalty = 2;  FailPenalty = 4;  Priority = "LOW" }
+    "Disk Interface"    = @{ WarnPenalty = 2;  FailPenalty = 4;  Priority = "LOW" }
+    "RAM Speed"         = @{ WarnPenalty = 2;  FailPenalty = 4;  Priority = "LOW" }
+    "RAM Configuration" = @{ WarnPenalty = 2;  FailPenalty = 4;  Priority = "LOW" }
 }
 
-# Calculate weighted score
+# Calculate weighted score with diminishing returns for repeated issues
 $score = 100
 $scoreBreakdown = @()
+$penaltyTracker = @{}  # Track penalties per test to apply diminishing returns
 
 foreach ($issue in $issues) {
     $testName = $issue.Test
@@ -865,11 +901,20 @@ foreach ($issue in $issues) {
     $priority = if ($testPriority.ContainsKey($testName)) { 
         $testPriority[$testName] 
     } else { 
-        @{ WarnPenalty = 7; FailPenalty = 15; Priority = "MEDIUM" } 
+        @{ WarnPenalty = 5; FailPenalty = 10; Priority = "MEDIUM" } 
     }
     
-    # Apply penalty
-    $penalty = if ($severity -eq 'FAIL') { $priority.FailPenalty } else { $priority.WarnPenalty }
+    # Calculate penalty with diminishing returns for same test type
+    $basePenalty = if ($severity -eq 'FAIL') { $priority.FailPenalty } else { $priority.WarnPenalty }
+    
+    # Apply diminishing returns: 2nd occurrence = 50%, 3rd+ = 25%
+    $occurrence = if ($penaltyTracker.ContainsKey($testName)) { $penaltyTracker[$testName] } else { 0 }
+    $penaltyTracker[$testName] = $occurrence + 1
+    
+    $penalty = if ($occurrence -eq 0) { $basePenalty }
+               elseif ($occurrence -eq 1) { [math]::Round($basePenalty * 0.5) }
+               else { [math]::Round($basePenalty * 0.25) }
+    
     $score -= $penalty
     
     # Track breakdown
@@ -888,13 +933,13 @@ if ($score -lt 0) { $score = 0 }
 # NO PASS BONUS - Score only shows real issues
 $passBonus = 0
 
-# Score interpretation
+# Score interpretation - Adjusted for realistic thresholds
 $scoreLabel = switch ($score) {
-    {$_ -ge 90} { "Excellent - Buy with confidence"; "Green" }
-    {$_ -ge 80} { "Good - Minor issues only"; "Green" }
-    {$_ -ge 70} { "Fair - Some concerns, negotiate price"; "Yellow" }
-    {$_ -ge 60} { "Below Average - Negotiate price down"; "Yellow" }
-    {$_ -ge 40} { "Poor - Significant issues, hard bargain"; "Red" }
+    {$_ -ge 85} { "Excellent - Buy with confidence"; "Green" }
+    {$_ -ge 70} { "Good - Minor issues only"; "Green" }
+    {$_ -ge 55} { "Fair - Some concerns, negotiate"; "Yellow" }
+    {$_ -ge 40} { "Below Average - Negotiate down"; "Yellow" }
+    {$_ -ge 25} { "Poor - Significant issues"; "Red" }
     default { "Bad - Avoid or heavily discount"; "Red" }
 }
 
@@ -1356,8 +1401,8 @@ $htmlReport += @"
 <table>
 <tr><th>Component</th><th>Details</th><th>Status</th></tr>
 <tr><td>CPU</td><td>$($systemInfo.CPU) ($($systemInfo.CPUCores)C/$($systemInfo.CPULogical)T)</td><td><span class="badge badge-pass">VERIFIED</span></td></tr>
-<tr><td>RAM</td><td>$($systemInfo.RAM_GB) GB DDR4</td><td><span class="badge badge-pass">OK</span></td></tr>
-<tr><td>Storage</td><td>NVMe SSD 256GB</td><td><span class="badge badge-pass">HEALTHY</span></td></tr>
+<tr><td>RAM</td><td>$($systemInfo.RAM_GB) GB $($systemInfo.RAMType) @ $($systemInfo.RAMSpeedMHz) MHz ($($systemInfo.RAMManufacturer))</td><td><span class="badge badge-pass">OK</span></td></tr>
+<tr><td>Storage</td><td>$($systemInfo.StorageModel) - $($systemInfo.StorageCapacityGB) GB $($systemInfo.StorageInterface)</td><td><span class="badge badge-pass">HEALTHY</span></td></tr>
 <tr><td>BIOS</td><td>$($systemInfo.BIOSVersion) ($($systemInfo.BIOSDate))</td><td><span class="badge badge-pass">OK</span></td></tr>
 <tr><td>OS</td><td>$($systemInfo.OS)</td><td><span class="badge badge-pass">ACTIVATED</span></td></tr>
 <tr><td>Serial</td><td>$($systemInfo.SerialNumber)</td><td><span class="badge badge-pass">VALID</span></td></tr>
