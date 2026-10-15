@@ -864,108 +864,157 @@ if ($issues.Count -gt 0) {
 # ============================================================
 # EXPORT HTML REPORT
 # ============================================================
-$css = 'body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a2e; color: #eee; }'
-$css += 'h1 { color: #00d4ff; }'
-$css += 'h2 { color: #ff6b6b; border-bottom: 2px solid #333; padding-bottom: 10px; margin-top: 30px; }'
-$css += 'table { border-collapse: collapse; width: 100%; margin: 10px 0; }'
-$css += 'th, td { border: 1px solid #444; padding: 10px; text-align: left; }'
-$css += 'th { background: #16213e; }'
-$css += '.score-box { font-size: 48px; font-weight: bold; text-align: center; padding: 20px; margin: 20px 0; border-radius: 10px; }'
-$css += '.score-good { background: #003322; color: #00ff88; border: 2px solid #00ff88; }'
-$css += '.score-warn { background: #332200; color: #ffdd00; border: 2px solid #ffdd00; }'
-$css += '.score-bad { background: #330000; color: #ff4444; border: 2px solid #ff4444; }'
-$css += '.badge { padding: 4px 12px; border-radius: 4px; font-weight: bold; }'
-$css += '.badge-pass { background: #00ff88; color: black; }'
-$css += '.badge-warn { background: #ffdd00; color: black; }'
-$css += '.badge-fail { background: #ff4444; color: white; }'
-$css += '.badge-info { background: #00aaff; color: white; }'
-$css += '.info-box { background: #16213e; padding: 15px; border-radius: 5px; margin: 10px 0; }'
-$css += '.verify-pass { color: #00ff88; font-weight: bold; }'
-$css += '.verify-warn { color: #ffdd00; font-weight: bold; }'
+$css = @"
+body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a2e; color: #eee; }
+h1 { color: #00d4ff; font-size: 28px; }
+h2 { color: #ff6b6b; border-bottom: 2px solid #333; padding-bottom: 10px; margin-top: 30px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+th, td { border: 1px solid #444; padding: 10px; text-align: left; }
+th { background: #16213e; color: #00d4ff; }
+td { background: #0f3460; }
+.score-box { font-size: 48px; font-weight: bold; text-align: center; padding: 30px; margin: 20px 0; border-radius: 10px; }
+.score-good { background: #003322; color: #00ff88; border: 3px solid #00ff88; }
+.score-warn { background: #332200; color: #ffdd00; border: 3px solid #ffdd00; }
+.score-bad { background: #330000; color: #ff4444; border: 3px solid #ff4444; }
+.badge { padding: 5px 15px; border-radius: 5px; font-weight: bold; display: inline-block; }
+.badge-pass { background: #00ff88; color: black; }
+.badge-warn { background: #ffdd00; color: black; }
+.badge-fail { background: #ff4444; color: white; }
+.badge-info { background: #00aaff; color: white; }
+.info-box { background: #16213e; padding: 15px; border-radius: 5px; margin: 10px 0; border-left: 4px solid #00d4ff; }
+.verify-pass { color: #00ff88; font-weight: bold; }
+.verify-warn { color: #ffdd00; font-weight: bold; }
+.verify-fail { color: #ff4444; font-weight: bold; }
+.section { background: #16213e; padding: 20px; border-radius: 10px; margin: 20px 0; }
+"@
 
 $scoreClass = if ($score -ge 80) { 'score-good' } elseif ($score -ge 60) { 'score-warn' } else { 'score-bad' }
 $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
 
-$htmlReport = '<!DOCTYPE html><html><head><title>Laptop Diagnostic Report v2.0</title><style>' + $css + '</style></head><body>'
-$htmlReport += '<h1>Laptop Diagnostic Report v2.0</h1>'
-$htmlReport += '<p>Generated: ' + $timestamp + '</p>'
+# Build HTML with proper formatting
+$htmlReport = @"
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Laptop Diagnostic Report</title>
+<style>
+$css
+</style>
+</head>
+<body>
 
-# Health Score
-$htmlReport += '<h2>Health Score</h2>'
-$htmlReport += '<div class="score-box ' + $scoreClass + '">' + $score + ' / 100<br><small>' + $scoreLabel[0] + '</small></div>'
+<h1>LAPTOP DIAGNOSTIC REPORT</h1>
+<p>Generated: $timestamp</p>
 
-# System Info
-$htmlReport += '<h2>System Information</h2><table>'
-$htmlReport += '<tr><th>Property</th><th>Value</th></tr>'
-$htmlReport += '<tr><td>Manufacturer</td><td>' + $systemInfo.Manufacturer + '</td></tr>'
-$htmlReport += '<tr><td>Model</td><td>' + $systemInfo.Model + '</td></tr>'
-$htmlReport += '<tr><td>Serial Number</td><td>' + $systemInfo.SerialNumber + '</td></tr>'
-$htmlReport += '<tr><td>Motherboard</td><td>' + $systemInfo.Motherboard + '</td></tr>'
-$htmlReport += '<tr><td>BIOS</td><td>' + $systemInfo.BIOSVersion + ' (' + $systemInfo.BIOSDate + ')</td></tr>'
-$htmlReport += '<tr><td>Operating System</td><td>' + $systemInfo.OS + '</td></tr>'
-$htmlReport += '<tr><td>CPU</td><td>' + $systemInfo.CPU + '</td></tr>'
-$htmlReport += '<tr><td>Cores/Threads</td><td>' + $systemInfo.CPUCores + 'C / ' + $systemInfo.CPULogical + 'T</td></tr>'
-$htmlReport += '<tr><td>Clock Speed</td><td>' + $systemInfo.CurrentClockMHz + ' MHz (Max: ' + $systemInfo.MaxClockMHz + ' MHz)</td></tr>'
-$htmlReport += '<tr><td>Cache</td><td>L2: ' + $systemInfo.L2CacheKB + ' KB, L3: ' + $systemInfo.L3CacheKB + ' KB</td></tr>'
-$htmlReport += '<tr><td>RAM</td><td>' + $systemInfo.RAM_GB + ' GB</td></tr>'
-$htmlReport += '</table>'
+<div class="section">
+<h2>HEALTH SCORE</h2>
+<div class="score-box $scoreClass">
+$score / 100
+<br><small>$($scoreLabel[0])</small>
+</div>
+</div>
 
-# Hardware Verification
+<div class="section">
+<h2>SYSTEM INFORMATION</h2>
+<table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Manufacturer</td><td>$($systemInfo.Manufacturer)</td></tr>
+<tr><td>Model</td><td>$($systemInfo.Model)</td></tr>
+<tr><td>Serial Number</td><td>$($systemInfo.SerialNumber)</td></tr>
+<tr><td>Motherboard</td><td>$($systemInfo.Motherboard)</td></tr>
+<tr><td>BIOS</td><td>$($systemInfo.BIOSVersion) ($($systemInfo.BIOSDate))</td></tr>
+<tr><td>Operating System</td><td>$($systemInfo.OS)</td></tr>
+<tr><td>CPU</td><td>$($systemInfo.CPU)</td></tr>
+<tr><td>Cores/Threads</td><td>$($systemInfo.CPUCores)C / $($systemInfo.CPULogical)T</td></tr>
+<tr><td>Clock Speed</td><td>$($systemInfo.CurrentClockMHz) MHz (Max: $($systemInfo.MaxClockMHz) MHz)</td></tr>
+<tr><td>Cache</td><td>L2: $($systemInfo.L2CacheKB) KB, L3: $($systemInfo.L3CacheKB) KB</td></tr>
+<tr><td>RAM</td><td>$($systemInfo.RAM_GB) GB</td></tr>
+</table>
+</div>
+"@
+
+# Add Hardware Verification section
 if ($verifications.Count -gt 0) {
-    $htmlReport += '<h2>Hardware Verification</h2><table>'
-    $htmlReport += '<tr><th>Component</th><th>Detected</th><th>Expected</th><th>Status</th></tr>'
+    $htmlReport += @"
+<div class="section">
+<h2>HARDWARE VERIFICATION</h2>
+<p>Checking detected hardware against known specifications database:</p>
+<table>
+<tr><th>Component</th><th>Detected</th><th>Expected</th><th>Status</th></tr>
+"@
     foreach ($v in $verifications) {
-        $statusClass = if ($v.Status -eq 'VERIFIED') { 'verify-pass' } else { 'verify-warn' }
-        $htmlReport += '<tr><td>' + $v.Component + '</td><td>' + $v.Detected + '</td><td>' + $v.Expected + '</td><td class="' + $statusClass + '">' + $v.Status + '</td></tr>'
+        $statusClass = if ($v.Status -eq 'VERIFIED') { 'verify-pass' } elseif ($v.Status -eq 'CHECK') { 'verify-warn' } else { 'verify-fail' }
+        $htmlReport += "<tr><td>$($v.Component)</td><td>$($v.Detected)</td><td>$($v.Expected)</td><td class=`"$statusClass`">$($v.Status)</td></tr>`n"
     }
-    $htmlReport += '</table>'
+    $htmlReport += "</table>`n</div>`n"
 }
 
-# RAM Details
+# Add RAM Details
 if ($ramDetails.Count -gt 0) {
-    $htmlReport += '<h2>RAM Modules</h2><table>'
-    $htmlReport += '<tr><th>Slot</th><th>Capacity</th><th>Speed</th><th>Part Number</th><th>Manufacturer</th></tr>'
+    $htmlReport += @"
+<div class="section">
+<h2>RAM MODULES</h2>
+<table>
+<tr><th>Slot</th><th>Capacity</th><th>Speed</th><th>Part Number</th><th>Manufacturer</th></tr>
+"@
     foreach ($r in $ramDetails) {
-        $htmlReport += '<tr><td>' + $r.Slot + '</td><td>' + $r.Capacity + ' GB</td><td>' + $r.Speed + ' MHz</td><td>' + $r.PartNumber + '</td><td>' + $r.Manufacturer + '</td></tr>'
+        $htmlReport += "<tr><td>$($r.Slot)</td><td>$($r.Capacity) GB</td><td>$($r.Speed) MHz</td><td>$($r.PartNumber)</td><td>$($r.Manufacturer)</td></tr>`n"
     }
-    $htmlReport += '</table>'
+    $htmlReport += "</table>`n</div>`n"
 }
 
-# Battery Info
+# Add Battery Info
 if ($report.Count -gt 0 -and $report[0].PSObject.Properties['Health']) {
     $b = $report[0]
-    $htmlReport += '<h2>Battery Information</h2><table>'
-    $htmlReport += '<tr><th>Metric</th><th>Value</th></tr>'
-    $htmlReport += '<tr><td>Design Capacity</td><td>' + $b.DesignCapacity + ' mWh</td></tr>'
-    $htmlReport += '<tr><td>Full Charge Capacity</td><td>' + $b.FullChargeCapacity + ' mWh</td></tr>'
-    $htmlReport += '<tr><td>Health</td><td>' + $b.Health + '%</td></tr>'
-    $htmlReport += '<tr><td>Cycle Count</td><td>' + $b.CycleCount + '</td></tr>'
-    $htmlReport += '</table>'
+    $batteryColor = if ($b.Health -ge 80) { 'badge-pass' } elseif ($b.Health -ge 60) { 'badge-warn' } else { 'badge-fail' }
+    $htmlReport += @"
+<div class="section">
+<h2>BATTERY INFORMATION</h2>
+<table>
+<tr><th>Metric</th><th>Value</th><th>Status</th></tr>
+<tr><td>Design Capacity</td><td>$($b.DesignCapacity) mWh</td><td></td></tr>
+<tr><td>Full Charge Capacity</td><td>$($b.FullChargeCapacity) mWh</td><td></td></tr>
+<tr><td>Health</td><td>$($b.Health)%</td><td><span class="badge $batteryColor">$(if($b.Health -ge 80){'GOOD'}elseif($b.Health -ge 60){'FAIR'}else{'POOR'})</span></td></tr>
+<tr><td>Cycle Count</td><td>$($b.CycleCount)</td><td><span class="badge $(if($b.CycleCount -lt 300){'badge-pass'}else{'badge-warn'})">$(if($b.CycleCount -lt 300){'NORMAL'}else{'HEAVY'})</span></td></tr>
+</table>
+</div>
+"@
 }
 
-# Test Results
-$htmlReport += '<h2>Test Results</h2><table>'
-$htmlReport += '<tr><th>Test</th><th>Status</th><th>Details</th></tr>'
+# Add Test Results
+$htmlReport += @"
+<div class="section">
+<h2>TEST RESULTS</h2>
+<p><span class="badge badge-pass">PASS: $($passes.Count)</span> <span class="badge badge-warn">WARN: $($warnCount)</span> <span class="badge badge-fail">FAIL: $failCount</span></p>
+<table>
+<tr><th>Test</th><th>Status</th><th>Details</th></tr>
+"@
 
 foreach ($p in $passes) {
-    $htmlReport += '<tr><td>' + $p.Test + '</td><td><span class="badge badge-pass">PASS</span></td><td>' + $p.Detail + '</td></tr>'
+    $htmlReport += "<tr><td>$($p.Test)</td><td><span class=`"badge badge-pass`">PASS</span></td><td>$($p.Detail)</td></tr>`n"
 }
 foreach ($i in $issues) {
     $badgeClass = if ($i.Severity -eq 'FAIL') { 'badge-fail' } else { 'badge-warn' }
-    $htmlReport += '<tr><td>' + $i.Test + '</td><td><span class="badge ' + $badgeClass + '">' + $i.Severity + '</span></td><td>' + $i.Detail + '</td></tr>'
+    $htmlReport += "<tr><td>$($i.Test)</td><td><span class=`"badge $badgeClass`">$($i.Severity)</span></td><td>$($i.Detail)</td></tr>`n"
 }
 
-$htmlReport += '</table>'
+$htmlReport += "</table>`n</div>`n"
 
-# Summary
-$htmlReport += '<h2>Summary</h2>'
-$htmlReport += '<div class="info-box">'
-$htmlReport += '<p><strong>Passed:</strong> ' + $passes.Count + ' | <strong>Warnings:</strong> ' + $warnCount + ' | <strong>Failures:</strong> ' + $failCount + '</p>'
-$htmlReport += '<p><strong>Test Duration:</strong> ' + [math]::Round($duration.TotalSeconds, 1) + ' seconds</p>'
-$htmlReport += '</div>'
+# Add Summary
+$htmlReport += @"
+<div class="section">
+<h2>SUMMARY</h2>
+<div class="info-box">
+<p><strong>Passed:</strong> $($passes.Count) | <strong>Warnings:</strong> $($warnCount) | <strong>Failures:</strong> $failCount</p>
+<p><strong>Test Duration:</strong> $([math]::Round($duration.TotalSeconds, 1)) seconds</p>
+</div>
+<p style="color: #666; font-size: 12px;">Generated by Laptop Diagnostic Tool v2.0 | Hardware Database Verification</p>
+</div>
 
-$htmlReport += '<hr><p style="color: #666; font-size: 12px;">Generated by Laptop Diagnostic Tool v2.0 | Hardware Database Verification</p>'
-$htmlReport += '</body></html>'
+</body>
+</html>
+"@
 
 $htmlReport | Out-File -FilePath $OutputPath -Encoding UTF8
 Write-Host "`n  Report saved to: $OutputPath" -ForegroundColor Cyan
