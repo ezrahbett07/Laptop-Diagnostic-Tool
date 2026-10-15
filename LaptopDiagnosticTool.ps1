@@ -809,34 +809,146 @@ Write-Host "  Passes: $($passes.Count)" -ForegroundColor Green
 Write-Host "  Warnings: $($warnings.Count)" -ForegroundColor Yellow
 Write-Host "  Failures: $(($issues | Where-Object {$_.Severity -eq 'FAIL'}).Count)" -ForegroundColor Red
 
-# Calculate health score
+# ============================================================
+# PRIORITY-BASED HEALTH SCORE CALCULATION
+# ============================================================
+# Each test has a weight based on how critical it is
+# Critical issues reduce score more than minor ones
+
+# Define priority weights for each test type
+# Format: TestName = @{ WarnPenalty = X; FailPenalty = Y; Priority = "CRITICAL/HIGH/MEDIUM/LOW" }
+$testPriority = @{
+    # CRITICAL - Direct impact on usability/safety (Max penalty: 25-30)
+    "Disk Health"       = @{ WarnPenalty = 20; FailPenalty = 30; Priority = "CRITICAL" }
+    "Battery Health"    = @{ WarnPenalty = 15; FailPenalty = 25; Priority = "CRITICAL" }
+    "System Stability"  = @{ WarnPenalty = 15; FailPenalty = 30; Priority = "CRITICAL" }
+    "Memory Errors"     = @{ WarnPenalty = 15; FailPenalty = 25; Priority = "CRITICAL" }
+    
+    # HIGH - Significantly affects experience (Max penalty: 12-15)
+    "Battery Cycles"    = @{ WarnPenalty = 12; FailPenalty = 15; Priority = "HIGH" }
+    "Available RAM"     = @{ WarnPenalty = 12; FailPenalty = 15; Priority = "HIGH" }
+    "WiFi Stability"    = @{ WarnPenalty = 12; FailPenalty = 15; Priority = "HIGH" }
+    "Total RAM"         = @{ WarnPenalty = 12; FailPenalty = 15; Priority = "HIGH" }
+    "Write Speed"       = @{ WarnPenalty = 10; FailPenalty = 15; Priority = "HIGH" }
+    
+    # MEDIUM - Noticeable but manageable (Max penalty: 7-10)
+    "CPU Age"           = @{ WarnPenalty = 8;  FailPenalty = 10; Priority = "MEDIUM" }
+    "GPU Driver"        = @{ WarnPenalty = 5;  FailPenalty = 8;  Priority = "MEDIUM" }
+    "Network"           = @{ WarnPenalty = 7;  FailPenalty = 10; Priority = "MEDIUM" }
+    "Disk Space"        = @{ WarnPenalty = 5;  FailPenalty = 8;  Priority = "MEDIUM" }
+    "TPM"               = @{ WarnPenalty = 5;  FailPenalty = 8;  Priority = "MEDIUM" }
+    "Windows License"   = @{ WarnPenalty = 8;  FailPenalty = 15; Priority = "MEDIUM" }
+    
+    # LOW - Minor inconvenience (Max penalty: 3-5)
+    "GPU"               = @{ WarnPenalty = 5;  FailPenalty = 10; Priority = "LOW" }
+    "VRAM"              = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
+    "CPU Verification"  = @{ WarnPenalty = 5;  FailPenalty = 10; Priority = "LOW" }
+    "RAM Module"        = @{ WarnPenalty = 5;  FailPenalty = 10; Priority = "LOW" }
+    "Antivirus"         = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
+    "Firewall"          = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
+    "Definitions"       = @{ WarnPenalty = 2;  FailPenalty = 3;  Priority = "LOW" }
+    "WiFi Standard"     = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
+    "Disk Interface"    = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
+    "RAM Speed"         = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
+    "RAM Configuration" = @{ WarnPenalty = 3;  FailPenalty = 5;  Priority = "LOW" }
+}
+
+# Calculate weighted score
 $score = 100
-$failCount = ($issues | Where-Object {$_.Severity -eq 'FAIL'}).Count
-$warnCount = ($issues | Where-Object {$_.Severity -eq 'WARN'}).Count
-$score -= ($failCount * 15) + ($warnCount * 5)
+$scoreBreakdown = @()
+
+foreach ($issue in $issues) {
+    $testName = $issue.Test
+    $severity = $issue.Severity
+    
+    # Find priority for this test (default to MEDIUM if not found)
+    $priority = if ($testPriority.ContainsKey($testName)) { 
+        $testPriority[$testName] 
+    } else { 
+        @{ WarnPenalty = 7; FailPenalty = 15; Priority = "MEDIUM" } 
+    }
+    
+    # Apply penalty
+    $penalty = if ($severity -eq 'FAIL') { $priority.FailPenalty } else { $priority.WarnPenalty }
+    $score -= $penalty
+    
+    # Track breakdown
+    $scoreBreakdown += [PSCustomObject]@{
+        Test = $testName
+        Severity = $severity
+        Priority = $priority.Priority
+        Penalty = $penalty
+        Detail = $issue.Detail
+    }
+}
+
+# Ensure score doesn't go below 0
 if ($score -lt 0) { $score = 0 }
+
+# Calculate bonus for passed tests
+$passBonus = [math]::Min(5, [math]::Floor($passes.Count / 5))  # Max 5 bonus points
+$score += $passBonus
+if ($score -gt 100) { $score = 100 }
 
 # Score interpretation
 $scoreLabel = switch ($score) {
     {$_ -ge 90} { "Excellent - Buy with confidence"; "Green" }
     {$_ -ge 80} { "Good - Minor issues only"; "Green" }
-    {$_ -ge 70} { "Fair - Some concerns"; "Yellow" }
-    {$_ -ge 60} { "Below Average - Negotiate price"; "Yellow" }
-    {$_ -ge 40} { "Poor - Significant issues"; "Red" }
+    {$_ -ge 70} { "Fair - Some concerns, negotiate price"; "Yellow" }
+    {$_ -ge 60} { "Below Average - Negotiate price down"; "Yellow" }
+    {$_ -ge 40} { "Poor - Significant issues, hard bargain"; "Red" }
     default { "Bad - Avoid or heavily discount"; "Red" }
 }
 
 Write-Host "`n  +" -NoNewline
-Write-Host ("=" * 40) -NoNewline -ForegroundColor Cyan
+Write-Host ("=" * 50) -NoNewline -ForegroundColor Cyan
 Write-Host "+" -ForegroundColor Cyan
 Write-Host "  |  " -NoNewline -ForegroundColor Cyan
 Write-Host "OVERALL HEALTH SCORE: $score / 100" -NoNewline -ForegroundColor $scoreLabel[1]
 Write-Host "  |" -ForegroundColor Cyan
 Write-Host "  |  " -NoNewline -ForegroundColor Cyan
 Write-Host $scoreLabel[0] -ForegroundColor $scoreLabel[1]
+Write-Host "  |  " -NoNewline -ForegroundColor Cyan
+Write-Host "(Pass bonus: +$passBonus)" -ForegroundColor Gray
 Write-Host "  +" -NoNewline -ForegroundColor Cyan
-Write-Host ("=" * 40) -NoNewline -ForegroundColor Cyan
+Write-Host ("=" * 50) -NoNewline -ForegroundColor Cyan
 Write-Host "+" -ForegroundColor Cyan
+
+# Show score breakdown if there are issues
+if ($scoreBreakdown.Count -gt 0) {
+    Write-Host "`n  SCORE BREAKDOWN (Priority-based):" -ForegroundColor Cyan
+    Write-Host "  " + ("-" * 58) -ForegroundColor DarkGray
+    
+    $criticalIssues = $scoreBreakdown | Where-Object { $_.Priority -eq "CRITICAL" }
+    $highIssues = $scoreBreakdown | Where-Object { $_.Priority -eq "HIGH" }
+    $mediumIssues = $scoreBreakdown | Where-Object { $_.Priority -eq "MEDIUM" }
+    $lowIssues = $scoreBreakdown | Where-Object { $_.Priority -eq "LOW" }
+    
+    if ($criticalIssues) {
+        Write-Host "  CRITICAL Issues:" -ForegroundColor Red
+        foreach ($i in $criticalIssues) { 
+            Write-Host "    - $($i.Test) [$($i.Severity)]: -$($i.Penalty) points" -ForegroundColor Red 
+        }
+    }
+    if ($highIssues) {
+        Write-Host "  HIGH Priority:" -ForegroundColor Yellow
+        foreach ($i in $highIssues) { 
+            Write-Host "    - $($i.Test) [$($i.Severity)]: -$($i.Penalty) points" -ForegroundColor Yellow 
+        }
+    }
+    if ($mediumIssues) {
+        Write-Host "  MEDIUM Priority:" -ForegroundColor DarkYellow
+        foreach ($i in $mediumIssues) { 
+            Write-Host "    - $($i.Test) [$($i.Severity)]: -$($i.Penalty) points" -ForegroundColor DarkYellow 
+        }
+    }
+    if ($lowIssues) {
+        Write-Host "  LOW Priority:" -ForegroundColor Gray
+        foreach ($i in $lowIssues) { 
+            Write-Host "    - $($i.Test) [$($i.Severity)]: -$($i.Penalty) points" -ForegroundColor Gray 
+        }
+    }
+}
 
 # Summary of verification results
 if ($verifications.Count -gt 0) {
@@ -883,6 +995,63 @@ h1 { color: #58a6ff; font-size: 24px; text-align: center; margin-bottom: 5px; }
 .stat-fail { background: #4d1515; color: #f85149; border: 1px solid #f85149; }
 .stat-number { font-size: 32px; font-weight: bold; }
 .stat-text { font-size: 12px; }
+.score-breakdown { 
+    background: #0d1117; 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-top: 15px; 
+    border: 1px solid #30363d;
+}
+.breakdown-title { 
+    color: #58a6ff; 
+    font-size: 14px; 
+    font-weight: bold; 
+    margin-bottom: 10px; 
+    text-align: center;
+}
+.breakdown-items { 
+    display: flex; 
+    justify-content: center; 
+    gap: 30px; 
+}
+.breakdown-item { 
+    text-align: center; 
+    padding: 5px 15px;
+}
+.breakdown-label { 
+    display: block; 
+    color: #8b949e; 
+    font-size: 11px; 
+    margin-bottom: 3px;
+}
+.breakdown-value { 
+    font-size: 18px; 
+    font-weight: bold; 
+    color: #e6edf3;
+}
+.breakdown-value.penalty { color: #f85149; }
+.breakdown-value.bonus { color: #3fb950; }
+.breakdown-item.total { 
+    border-left: 1px solid #30363d; 
+    border-right: 1px solid #30363d;
+}
+.priority-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 8px;
+}
+.priority-critical { background: #f85149; color: white; }
+.priority-high { background: #d29922; color: black; }
+.priority-medium { background: #8b949e; color: white; }
+.priority-low { background: #30363d; color: #8b949e; }
+.penalty-points {
+    color: #f85149;
+    font-weight: bold;
+    float: right;
+}
 .two-column { display: flex; gap: 20px; margin-top: 20px; }
 .column { flex: 1; border-radius: 10px; padding: 20px; }
 .column-pass { background: linear-gradient(180deg, #0d4429 0%, #161b22 100%); border: 2px solid #3fb950; }
@@ -968,12 +1137,30 @@ $score / 100
 <div class="stat-text">FAILURES</div>
 </div>
 </div>
+
+<div class="score-breakdown">
+<div class="breakdown-title">SCORE BREAKDOWN (Priority-Based)</div>
+<div class="breakdown-items">
+<div class="breakdown-item">
+<span class="breakdown-label">Base Score:</span>
+<span class="breakdown-value">100</span>
+</div>
+<div class="breakdown-item">
+<span class="breakdown-label">Issue Penalties:</span>
+<span class="breakdown-value penalty">-$([math]::Max(0, 100 - $score + $passBonus))</span>
+</div>
+<div class="breakdown-item">
+<span class="breakdown-label">Pass Bonus:</span>
+<span class="breakdown-value bonus">+$passBonus</span>
+</div>
+<div class="breakdown-item total">
+<span class="breakdown-label">Final Score:</span>
+<span class="breakdown-value">$score / 100</span>
+</div>
+</div>
+</div>
 </div>
 
-<div class="two-column">
-
-<div class="column column-pass">
-<div class="column-title">PASS - Hardware Working Correctly</div>
 "@
 
 # Add PASS items to left column
@@ -1156,7 +1343,11 @@ foreach ($i in $issues) {
     
     $htmlReport += @"
 <div class="item $itemClass">
-<div class="item-name">[$($i.Severity)] $($i.Test)</div>
+<div class="item-name">
+[$($i.Severity)] $($i.Test)
+$(if($testPriority.ContainsKey($i.Test)){"<span class='priority-badge priority-$($testPriority[$i.Test].Priority.ToLower())'>$($testPriority[$i.Test].Priority)</span>"})
+<span class="penalty-points">-$((if($i.Severity -eq 'FAIL'){$testPriority[$i.Test].FailPenalty}else{$testPriority[$i.Test].WarnPenalty}) -as [int]) pts</span>
+</div>
 <div class="item-detail">$($i.Detail)</div>
 $(if($explanation){"<div class='item-effect'>$explanation</div>"})
 </div>
