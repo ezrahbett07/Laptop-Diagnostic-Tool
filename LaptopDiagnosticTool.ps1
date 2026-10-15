@@ -885,10 +885,8 @@ foreach ($issue in $issues) {
 # Ensure score doesn't go below 0
 if ($score -lt 0) { $score = 0 }
 
-# Calculate bonus for passed tests
-$passBonus = [math]::Min(5, [math]::Floor($passes.Count / 5))  # Max 5 bonus points
-$score += $passBonus
-if ($score -gt 100) { $score = 100 }
+# NO PASS BONUS - Score only shows real issues
+$passBonus = 0
 
 # Score interpretation
 $scoreLabel = switch ($score) {
@@ -908,8 +906,6 @@ Write-Host "OVERALL HEALTH SCORE: $score / 100" -NoNewline -ForegroundColor $sco
 Write-Host "  |" -ForegroundColor Cyan
 Write-Host "  |  " -NoNewline -ForegroundColor Cyan
 Write-Host $scoreLabel[0] -ForegroundColor $scoreLabel[1]
-Write-Host "  |  " -NoNewline -ForegroundColor Cyan
-Write-Host "(Pass bonus: +$passBonus)" -ForegroundColor Gray
 Write-Host "  +" -NoNewline -ForegroundColor Cyan
 Write-Host ("=" * 50) -NoNewline -ForegroundColor Cyan
 Write-Host "+" -ForegroundColor Cyan
@@ -1146,12 +1142,8 @@ $score / 100
 <span class="breakdown-value">100</span>
 </div>
 <div class="breakdown-item">
-<span class="breakdown-label">Issue Penalties:</span>
-<span class="breakdown-value penalty">-$([math]::Max(0, 100 - $score + $passBonus))</span>
-</div>
-<div class="breakdown-item">
-<span class="breakdown-label">Pass Bonus:</span>
-<span class="breakdown-value bonus">+$passBonus</span>
+<span class="breakdown-label">Total Penalties:</span>
+<span class="breakdown-value penalty">-$([math]::Max(0, 100 - $score))</span>
 </div>
 <div class="breakdown-item total">
 <span class="breakdown-label">Final Score:</span>
